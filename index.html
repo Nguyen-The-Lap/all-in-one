@@ -224,7 +224,7 @@
                 placeholder="Paste YouTube URL here..."
                 autocomplete="off"
             >
-            <button id="convertBtn" py-click="convert_to_wav()">Convert</button>
+            <button id="convertBtn">Convert</button>
         </div>
 
         <div class="loader" id="loader"></div>
@@ -248,13 +248,11 @@
         </div>
     </div>
 
-    <script type="py" config='{"packages": ["pyodide-http"]}'>
+    <script type="py">
         import js
-        from pyodide.http import pyfetch
-        import json
         import asyncio
-        from urllib.parse import urlparse, parse_qs
         import re
+        from pyscript import when
 
         def show_status(message, status_type):
             status_el = js.document.getElementById('status')
@@ -292,7 +290,8 @@
             pattern = r'^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+'
             return re.match(pattern, url) is not None
 
-        async def convert_to_wav():
+        @when("click", "#convertBtn")
+        async def convert_to_wav(event):
             """Main conversion function"""
             url_input = js.document.getElementById('youtubeUrl')
             convert_btn = js.document.getElementById('convertBtn')
@@ -327,20 +326,18 @@
                 show_progress(True, 25)
                 show_status('Fetching video information...', 'info')
                 
-                # Using a public YouTube download API
-                # Note: For production, you should use your own backend service
-                api_url = f'https://youtube-mp36.p.rapidapi.com/dl?id={video_id}'
+                await asyncio.sleep(0.5)
                 
                 show_progress(True, 50)
                 show_status('Processing audio extraction...', 'info')
                 
                 # Simulating the conversion process
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.5)
                 
                 show_progress(True, 75)
                 show_status('Converting to WAV format...', 'info')
                 
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.5)
                 
                 show_progress(True, 100)
                 
