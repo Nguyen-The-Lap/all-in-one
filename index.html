@@ -32,7 +32,7 @@
       border-radius: 24px;
       padding: 40px 36px;
       width: 100%; max-width: 560px;
-      box-shadow: 0 0 60px rgba(124,58,237,0.15);
+      box-shadow: 0 0 80px rgba(124,58,237,0.15);
     }
     .logo {
       display: flex; align-items: center; justify-content: center;
@@ -46,45 +46,40 @@
       font-size: 24px;
     }
     h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
-    .subtitle { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 30px; }
+    .subtitle { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 28px; }
 
-    .input-row { display: flex; gap: 10px; margin-bottom: 16px; }
+    .input-row { display: flex; gap: 10px; margin-bottom: 14px; }
     input {
-      flex: 1;
-      background: var(--bg);
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      color: var(--text);
-      font-size: 15px;
-      padding: 14px 16px;
-      outline: none;
-      transition: border-color 0.2s;
+      flex: 1; background: var(--bg);
+      border: 1.5px solid var(--border); border-radius: 12px;
+      color: var(--text); font-size: 15px; padding: 14px 16px;
+      outline: none; transition: border-color 0.2s;
     }
     input:focus { border-color: var(--purple-light); }
     input::placeholder { color: var(--muted); }
 
     #btn {
       background: linear-gradient(135deg, var(--purple), var(--purple-light));
-      color: white; border: none;
-      border-radius: 12px;
-      font-size: 15px; font-weight: 600;
-      padding: 14px 22px;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.15s;
+      color: white; border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 600; padding: 14px 22px;
+      cursor: pointer; transition: opacity 0.2s, transform 0.15s;
       white-space: nowrap;
     }
     #btn:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
     #btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
     .progress-wrap {
-      height: 5px; background: var(--border);
-      border-radius: 99px; overflow: hidden;
-      margin-bottom: 14px; display: none;
+      height: 5px; background: var(--border); border-radius: 99px;
+      overflow: hidden; margin-bottom: 14px; display: none;
     }
     .progress-bar {
       height: 100%;
       background: linear-gradient(90deg, var(--purple), var(--purple-light));
       border-radius: 99px;
+      transition: width 0.4s ease;
+      width: 0%;
+    }
+    .progress-bar.indeterminate {
       animation: indeterminate 1.3s ease-in-out infinite;
     }
     @keyframes indeterminate {
@@ -94,244 +89,329 @@
     }
 
     #status {
-      display: none;
-      border-radius: 12px;
-      padding: 13px 16px;
-      font-size: 13.5px; line-height: 1.65;
-      margin-bottom: 14px;
-      white-space: pre-wrap;
+      display: none; border-radius: 12px;
+      padding: 13px 16px; font-size: 13.5px; line-height: 1.65;
+      margin-bottom: 14px; white-space: pre-wrap;
     }
     #status.info    { display:block; background:rgba(124,58,237,.13); color:#c4b5fd; border:1px solid rgba(124,58,237,.35); }
     #status.success { display:block; background:rgba(34,197,94,.1);   color:#86efac; border:1px solid rgba(34,197,94,.35); }
     #status.error   { display:block; background:rgba(239,68,68,.1);   color:#fca5a5; border:1px solid rgba(239,68,68,.35); }
 
     #videoCard {
-      display: none;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 14px; overflow: hidden;
-      margin-bottom: 14px;
+      display: none; background: var(--bg);
+      border: 1px solid var(--border); border-radius: 14px;
+      overflow: hidden; margin-bottom: 14px;
     }
-    #videoCard img { width: 100%; height: 175px; object-fit: cover; display: block; }
+    #videoCard img { width:100%; height:175px; object-fit:cover; display:block; }
     .video-meta { padding: 12px 14px; }
-    #videoTitle { font-weight:600; font-size:14px; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    #videoChannel { font-size:12px; color:var(--muted); }
+    #videoTitle  { font-weight:600; font-size:14px; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    #videoAuthor { font-size:12px; color:var(--muted); }
 
     #downloadBtn {
-      display: none; width: 100%;
-      padding: 15px;
+      display: none; width: 100%; padding: 15px;
       background: linear-gradient(135deg, #15803d, #22c55e);
-      color: white; border: none;
-      border-radius: 12px;
+      color: white; border: none; border-radius: 12px;
       font-size: 16px; font-weight: 700;
-      cursor: pointer;
-      transition: opacity 0.2s, transform 0.15s;
+      cursor: pointer; transition: opacity 0.2s, transform 0.15s;
     }
     #downloadBtn:hover { opacity: 0.9; transform: translateY(-1px); }
+    #downloadBtn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-    .footer { text-align:center; margin-top:22px; font-size:12px; color:var(--muted); }
-
-    /* hide pyscript loading splash */
-    #py-internal-loading { display: none !important; }
+    .footer { text-align:center; margin-top:20px; font-size:12px; color:var(--muted); }
+    py-terminal { display: none !important; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <div class="logo">
-      <div class="logo-icon">🎵</div>
-      <h1>YouTube → WAV</h1>
-    </div>
-    <p class="subtitle">Paste a YouTube link and download as WAV instantly</p>
+<div class="card">
+  <div class="logo">
+    <div class="logo-icon">🎵</div>
+    <h1>YouTube → WAV</h1>
+  </div>
+  <p class="subtitle">Paste a YouTube link · download as WAV · no account needed</p>
 
-    <div class="input-row">
-      <input id="urlInput" type="text" placeholder="https://youtube.com/watch?v=..." autocomplete="off" />
-      <button id="btn">Convert</button>
-    </div>
-
-    <div class="progress-wrap" id="progressWrap">
-      <div class="progress-bar"></div>
-    </div>
-
-    <div id="status"></div>
-
-    <div id="videoCard">
-      <img id="videoThumb" src="" alt="" />
-      <div class="video-meta">
-        <div id="videoTitle"></div>
-        <div id="videoChannel"></div>
-      </div>
-    </div>
-
-    <button id="downloadBtn">⬇ Download WAV</button>
-
-    <p class="footer">Powered by cobalt.tools · No account needed · Runs in your browser</p>
+  <div class="input-row">
+    <input id="urlInput" type="text" placeholder="https://youtube.com/watch?v=..." autocomplete="off" />
+    <button id="btn">Convert</button>
   </div>
 
-  <script type="py" config='{"packages": ["pyodide-http"]}'>
-import re
-import json
-import js
-import asyncio
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <div id="status"></div>
+
+  <div id="videoCard">
+    <img id="videoThumb" src="" alt="" />
+    <div class="video-meta">
+      <div id="videoTitle"></div>
+      <div id="videoAuthor"></div>
+    </div>
+  </div>
+
+  <button id="downloadBtn">⬇ Download WAV</button>
+
+  <p class="footer">Uses YouTube's audio stream · Converts to WAV in your browser</p>
+</div>
+
+<!-- WAV encoding helper (runs before PyScript) -->
+<script>
+// ── WAV encoder ──────────────────────────────────────────
+// Converts a float32 PCM AudioBuffer to a 16-bit WAV Blob
+window.audioBufferToWav = function(buffer) {
+  const numChannels = buffer.numberOfChannels;
+  const sampleRate  = buffer.sampleRate;
+  const numSamples  = buffer.length;
+  const bytesPerSample = 2;
+  const blockAlign  = numChannels * bytesPerSample;
+  const byteRate    = sampleRate * blockAlign;
+  const dataSize    = numSamples * blockAlign;
+  const arrayBuffer = new ArrayBuffer(44 + dataSize);
+  const view        = new DataView(arrayBuffer);
+
+  function writeStr(off, s) { for (let i=0;i<s.length;i++) view.setUint8(off+i, s.charCodeAt(i)); }
+  function write32(off, v)  { view.setUint32(off, v, true); }
+  function write16(off, v)  { view.setUint16(off, v, true); }
+
+  writeStr(0,  'RIFF');
+  write32(4,   36 + dataSize);
+  writeStr(8,  'WAVE');
+  writeStr(12, 'fmt ');
+  write32(16,  16);
+  write16(20,  1);           // PCM
+  write16(22,  numChannels);
+  write32(24,  sampleRate);
+  write32(28,  byteRate);
+  write16(32,  blockAlign);
+  write16(34,  bytesPerSample * 8);
+  writeStr(36, 'data');
+  write32(40,  dataSize);
+
+  let offset = 44;
+  for (let i = 0; i < numSamples; i++) {
+    for (let ch = 0; ch < numChannels; ch++) {
+      let s = Math.max(-1, Math.min(1, buffer.getChannelData(ch)[i]));
+      view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+      offset += 2;
+    }
+  }
+  return new Blob([arrayBuffer], { type: 'audio/wav' });
+};
+
+// ── Fetch audio, decode, re-encode as WAV, trigger download ──
+window.convertAndDownload = async function(audioUrl, title) {
+  const statusEl = document.getElementById('status');
+  const bar      = document.getElementById('progressBar');
+
+  statusEl.textContent = 'Downloading audio stream…';
+  statusEl.className   = 'info';
+  bar.className = 'progress-bar';
+  bar.style.width = '30%';
+
+  const resp = await fetch(audioUrl);
+  if (!resp.ok) throw new Error(`Stream fetch failed: ${resp.status}`);
+  const arrayBuf = await resp.arrayBuffer();
+
+  bar.style.width = '60%';
+  statusEl.textContent = 'Decoding audio…';
+
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const decoded  = await audioCtx.decodeAudioData(arrayBuf);
+  await audioCtx.close();
+
+  bar.style.width = '85%';
+  statusEl.textContent = 'Encoding WAV…';
+
+  const wavBlob = window.audioBufferToWav(decoded);
+  bar.style.width = '100%';
+
+  const url = URL.createObjectURL(wavBlob);
+  const a   = document.createElement('a');
+  a.href     = url;
+  a.download = `${title}.wav`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  statusEl.textContent = '✅ Download started! Check your downloads folder.';
+  statusEl.className   = 'success';
+  document.getElementById('progressWrap').style.display = 'none';
+  document.getElementById('downloadBtn').style.display  = 'none';
+};
+</script>
+
+<script type="py" config='{"packages":["pyodide-http"]}'>
+import re, json, js, asyncio
 from pyscript import when
 import pyodide_http
+import urllib.request
 
 pyodide_http.patch_all()
 
-# ── state ──────────────────────────────────────────────────
-_state = {"download_url": None, "title": "audio"}
+_state = {"audio_url": None, "title": "audio"}
 
-# ── helpers ────────────────────────────────────────────────
-def set_status(msg, kind):
+# ── UI helpers ────────────────────────────────────────────
+def set_status(msg, kind="info"):
     el = js.document.getElementById("status")
     el.textContent = msg
     el.className = kind
 
-def set_progress(show):
-    js.document.getElementById("progressWrap").style.display = "block" if show else "none"
+def set_loading(on):
+    wrap = js.document.getElementById("progressWrap")
+    bar  = js.document.getElementById("progressBar")
+    wrap.style.display = "block" if on else "none"
+    if on:
+        bar.className   = "progress-bar indeterminate"
+        bar.style.width = ""
+    else:
+        bar.className   = "progress-bar"
 
-def extract_video_id(url):
-    for pat in [r"[?&]v=([^&\n?#]+)", r"youtu\.be/([^&\n?#?]+)", r"shorts/([^&\n?#]+)"]:
+# ── Extract video ID ──────────────────────────────────────
+def get_video_id(url):
+    for pat in [r"[?&]v=([^&\n?#]{11})", r"youtu\.be/([^&\n?#]{11})", r"shorts/([^&\n?#]{11})"]:
         m = re.search(pat, url)
         if m:
             return m.group(1)
     return None
 
-def is_youtube_url(url):
-    return bool(re.match(r"^(https?://)?(www\.)?(youtube\.com|youtu\.be)/.+", url))
-
-# ── fetch video info via oEmbed (no auth) ──────────────────
-def fetch_video_info(video_id):
-    import urllib.request
-    oembed = f"https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={video_id}&format=json"
-    try:
-        with urllib.request.urlopen(oembed) as r:
-            return json.loads(r.read().decode())
-    except Exception:
-        return None
-
-# ── main convert ───────────────────────────────────────────
-@when("click", "#btn")
-async def on_convert(event):
-    url = js.document.getElementById("urlInput").value.strip()
-    btn = js.document.getElementById("btn")
-
-    # reset UI
-    js.document.getElementById("status").className = ""
-    js.document.getElementById("videoCard").style.display = "none"
-    js.document.getElementById("downloadBtn").style.display = "none"
-    _state["download_url"] = None
-
-    if not url:
-        set_status("Please paste a YouTube URL.", "error")
-        return
-    if not is_youtube_url(url):
-        set_status("That doesn't look like a YouTube URL.", "error")
-        return
-
-    video_id = extract_video_id(url)
-    if not video_id:
-        set_status("Could not extract video ID from URL.", "error")
-        return
-
-    btn.disabled = True
-    set_progress(True)
-    set_status("Fetching video info…", "info")
-
-    # ── video info ──
-    info = fetch_video_info(video_id)
-    if info:
-        _state["title"] = info.get("title", "audio")
-        js.document.getElementById("videoTitle").textContent  = info.get("title", "")
-        js.document.getElementById("videoChannel").textContent = info.get("author_name", "")
-        js.document.getElementById("videoThumb").src = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
-        js.document.getElementById("videoCard").style.display = "block"
-
-    set_status("Requesting download link from cobalt.tools…", "info")
-
-    # ── cobalt.tools API ──
-    import urllib.request
-    clean_url = f"https://www.youtube.com/watch?v={video_id}"
+# ── Call YouTube's innertube API (no auth required) ───────
+def innertube_player(video_id):
+    """
+    Calls YouTube's internal /youtubei/v1/player endpoint.
+    This is the same API YouTube's own web player uses.
+    Returns the full player JSON response.
+    """
+    url     = "https://www.youtube.com/youtubei/v1/player?key=AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8"
     payload = json.dumps({
-        "url": clean_url,
-        "downloadMode": "audio",
-        "audioFormat": "wav",
-        "audioQuality": "320"
+        "videoId": video_id,
+        "context": {
+            "client": {
+                "clientName":    "WEB",
+                "clientVersion": "2.20231121.08.00",
+                "hl":            "en",
+                "gl":            "US"
+            }
+        }
     }).encode()
 
     req = urllib.request.Request(
-        "https://api.cobalt.tools/",
-        data=payload,
-        headers={
-            "Content-Type": "application/json",
-            "Accept": "application/json"
+        url,
+        data    = payload,
+        headers = {
+            "Content-Type":       "application/json",
+            "X-YouTube-Client-Name":    "1",
+            "X-YouTube-Client-Version": "2.20231121.08.00",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36"
         },
-        method="POST"
+        method  = "POST"
     )
+    with urllib.request.urlopen(req, timeout=15) as r:
+        return json.loads(r.read().decode())
+
+def pick_best_audio(data):
+    """Pick highest-bitrate audio-only stream from adaptiveFormats."""
+    formats = data.get("streamingData", {}).get("adaptiveFormats", [])
+    audio   = [f for f in formats if f.get("mimeType", "").startswith("audio/")]
+    if not audio:
+        return None
+    # Sort by bitrate descending
+    audio.sort(key=lambda f: f.get("bitrate", 0), reverse=True)
+    return audio[0]
+
+# ── Main convert handler ──────────────────────────────────
+@when("click", "#btn")
+async def on_convert(event):
+    raw_url = js.document.getElementById("urlInput").value.strip()
+    btn     = js.document.getElementById("btn")
+
+    js.document.getElementById("status").className    = ""
+    js.document.getElementById("videoCard").style.display   = "none"
+    js.document.getElementById("downloadBtn").style.display = "none"
+    _state["audio_url"] = None
+
+    if not raw_url:
+        set_status("Please paste a YouTube URL.", "error"); return
+    if not re.search(r"(youtube\.com|youtu\.be)", raw_url):
+        set_status("That doesn't look like a YouTube URL.", "error"); return
+
+    video_id = get_video_id(raw_url)
+    if not video_id:
+        set_status("Could not extract video ID.", "error"); return
+
+    btn.disabled = True
+    set_loading(True)
+    set_status("Fetching video info from YouTube…")
 
     try:
-        with urllib.request.urlopen(req) as r:
-            data = json.loads(r.read().decode())
+        data  = innertube_player(video_id)
+        vinfo = data.get("videoDetails", {})
+        title = vinfo.get("title", "audio")
+        author = vinfo.get("author", "")
+        thumb  = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
 
-        status = data.get("status", "")
+        _state["title"] = title
 
-        if status in ("stream", "redirect", "tunnel"):
-            _state["download_url"] = data["url"]
-            set_status("✅ Ready! Click the button below to download.", "success")
-            js.document.getElementById("downloadBtn").style.display = "block"
+        # Show video card
+        js.document.getElementById("videoTitle").textContent  = title
+        js.document.getElementById("videoAuthor").textContent = author
+        js.document.getElementById("videoThumb").src          = thumb
+        js.document.getElementById("videoCard").style.display = "block"
 
-        elif status == "picker":
-            items = data.get("picker", [])
-            if items:
-                _state["download_url"] = items[0]["url"]
-                set_status("✅ Ready! Click the button below to download.", "success")
-                js.document.getElementById("downloadBtn").style.display = "block"
-            else:
-                raise Exception("Empty picker response")
+        set_status("Selecting best audio stream…")
 
-        elif status == "error":
-            code = data.get("error", {}).get("code", "unknown")
-            raise Exception(f"cobalt error: {code}")
+        fmt = pick_best_audio(data)
+        if not fmt:
+            raise Exception("No audio streams found for this video.")
 
-        else:
-            raise Exception(f"Unexpected status: {status!r}")
+        audio_url = fmt.get("url")
+        if not audio_url:
+            raise Exception("Audio stream URL missing (may be rate-limited). Try again in a moment.")
+
+        mime    = fmt.get("mimeType", "")
+        bitrate = fmt.get("bitrate", 0) // 1000
+        set_status(f"Found: {mime.split(';')[0]} @ {bitrate}kbps — ready to convert!", "success")
+
+        _state["audio_url"] = audio_url
+        js.document.getElementById("downloadBtn").style.display = "block"
+        set_loading(False)
 
     except Exception as e:
-        set_status(f"❌ {e}\n\nTry a different video or retry in a moment.", "error")
-
+        set_status(f"❌ {e}", "error")
+        set_loading(False)
     finally:
         btn.disabled = False
-        set_progress(False)
 
-
-# ── download button ────────────────────────────────────────
+# ── Download button: fetch stream → decode → WAV ─────────
 @when("click", "#downloadBtn")
 async def on_download(event):
-    dl_url = _state.get("download_url")
-    title  = _state.get("title", "audio")
-    if not dl_url:
+    audio_url = _state.get("audio_url")
+    title     = _state.get("title", "audio")
+    if not audio_url:
         return
 
-    set_status("Downloading… large videos may take a minute.", "info")
-    set_progress(True)
+    btn = js.document.getElementById("downloadBtn")
+    btn.disabled = True
 
-    # Trigger via JS anchor click (most reliable cross-browser)
-    a = js.document.createElement("a")
-    a.href = dl_url
-    a.download = f"{title}.wav"
-    a.target = "_blank"
-    js.document.body.appendChild(a)
-    a.click()
-    js.document.body.removeChild(a)
+    wrap = js.document.getElementById("progressWrap")
+    bar  = js.document.getElementById("progressBar")
+    wrap.style.display = "block"
+    bar.className   = "progress-bar"
+    bar.style.width = "0%"
 
-    set_status("✅ Download started! Check your downloads folder.", "success")
-    set_progress(False)
+    try:
+        # Hand off to the JS WAV encoder (handles fetch → decode → WAV → download)
+        await js.convertAndDownload(audio_url, title)
+    except Exception as e:
+        set_status(f"❌ Download failed: {e}\n\nTry the Convert button again.", "error")
+        wrap.style.display = "none"
+    finally:
+        btn.disabled = False
 
-
-# ── Enter key on input ─────────────────────────────────────
+# ── Enter key ─────────────────────────────────────────────
 @when("keydown", "#urlInput")
-async def on_keydown(event):
+async def on_key(event):
     if event.key == "Enter":
         await on_convert(event)
-  </script>
+</script>
 </body>
 </html>
