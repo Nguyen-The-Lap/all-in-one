@@ -1,405 +1,337 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YouTube to WAV Converter - PyScript</title>
-    
-    <!-- PyScript -->
-    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
-    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube → WAV</title>
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+  <link rel="stylesheet" href="https://pyscript.net/releases/2026.2.1/core.css" />
+  <script type="module" src="https://pyscript.net/releases/2026.2.1/core.js"></script>
 
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            padding: 40px;
-            max-width: 600px;
-            width: 100%;
-        }
+  <style>
+    :root {
+      --purple: #7c3aed;
+      --purple-light: #8b5cf6;
+      --bg: #0f0f13;
+      --card: #1a1a24;
+      --border: #2e2e42;
+      --text: #f0f0f5;
+      --muted: #8888aa;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px 36px;
+      width: 100%; max-width: 560px;
+      box-shadow: 0 0 60px rgba(124,58,237,0.15);
+    }
+    .logo {
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; margin-bottom: 6px;
+    }
+    .logo-icon {
+      width: 46px; height: 46px;
+      background: linear-gradient(135deg, var(--purple), var(--purple-light));
+      border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+    }
+    h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+    .subtitle { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 30px; }
 
-        h1 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 28px;
-            text-align: center;
-        }
+    .input-row { display: flex; gap: 10px; margin-bottom: 16px; }
+    input {
+      flex: 1;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-size: 15px;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus { border-color: var(--purple-light); }
+    input::placeholder { color: var(--muted); }
 
-        .subtitle {
-            color: #666;
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
+    #btn {
+      background: linear-gradient(135deg, var(--purple), var(--purple-light));
+      color: white; border: none;
+      border-radius: 12px;
+      font-size: 15px; font-weight: 600;
+      padding: 14px 22px;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      white-space: nowrap;
+    }
+    #btn:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
+    #btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
-        .input-group {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
+    .progress-wrap {
+      height: 5px; background: var(--border);
+      border-radius: 99px; overflow: hidden;
+      margin-bottom: 14px; display: none;
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple), var(--purple-light));
+      border-radius: 99px;
+      animation: indeterminate 1.3s ease-in-out infinite;
+    }
+    @keyframes indeterminate {
+      0%   { transform: translateX(-100%) scaleX(0.4); }
+      50%  { transform: translateX(60%)   scaleX(0.8); }
+      100% { transform: translateX(300%)  scaleX(0.4); }
+    }
 
-        input[type="text"] {
-            flex: 1;
-            min-width: 200px;
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
+    #status {
+      display: none;
+      border-radius: 12px;
+      padding: 13px 16px;
+      font-size: 13.5px; line-height: 1.65;
+      margin-bottom: 14px;
+      white-space: pre-wrap;
+    }
+    #status.info    { display:block; background:rgba(124,58,237,.13); color:#c4b5fd; border:1px solid rgba(124,58,237,.35); }
+    #status.success { display:block; background:rgba(34,197,94,.1);   color:#86efac; border:1px solid rgba(34,197,94,.35); }
+    #status.error   { display:block; background:rgba(239,68,68,.1);   color:#fca5a5; border:1px solid rgba(239,68,68,.35); }
 
-        input[type="text"]:focus {
-            outline: none;
-            border-color: #667eea;
-        }
+    #videoCard {
+      display: none;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      margin-bottom: 14px;
+    }
+    #videoCard img { width: 100%; height: 175px; object-fit: cover; display: block; }
+    .video-meta { padding: 12px 14px; }
+    #videoTitle { font-weight:600; font-size:14px; margin-bottom:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    #videoChannel { font-size:12px; color:var(--muted); }
 
-        button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
+    #downloadBtn {
+      display: none; width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #15803d, #22c55e);
+      color: white; border: none;
+      border-radius: 12px;
+      font-size: 16px; font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    #downloadBtn:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
+    .footer { text-align:center; margin-top:22px; font-size:12px; color:var(--muted); }
 
-        button:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .status {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 14px;
-            display: none;
-            white-space: pre-wrap;
-        }
-
-        .status.info {
-            background: #e3f2fd;
-            color: #1976d2;
-            display: block;
-        }
-
-        .status.success {
-            background: #e8f5e9;
-            color: #388e3c;
-            display: block;
-        }
-
-        .status.error {
-            background: #ffebee;
-            color: #c62828;
-            display: block;
-        }
-
-        .status.warning {
-            background: #fff3e0;
-            color: #f57c00;
-            display: block;
-        }
-
-        .loader {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-            display: none;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .info-box {
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 20px;
-            font-size: 13px;
-            color: #666;
-        }
-
-        .info-box strong {
-            color: #333;
-        }
-
-        .progress-container {
-            margin-top: 20px;
-            display: none;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 30px;
-            background: #e0e0e0;
-            border-radius: 15px;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            width: 0%;
-            transition: width 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 12px;
-        }
-
-        #output {
-            margin-top: 20px;
-            padding: 15px;
-            background: #f5f5f5;
-            border-radius: 10px;
-            font-family: monospace;
-            font-size: 12px;
-            max-height: 200px;
-            overflow-y: auto;
-            display: none;
-        }
-
-        .download-link {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 12px 24px;
-            background: #4CAF50;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: background 0.3s;
-        }
-
-        .download-link:hover {
-            background: #45a049;
-        }
-    </style>
+    /* hide pyscript loading splash */
+    #py-internal-loading { display: none !important; }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎵 YouTube to WAV</h1>
-        <p class="subtitle">Convert YouTube videos to high-quality WAV audio files using Python</p>
-        
-        <div class="input-group">
-            <input 
-                type="text" 
-                id="youtubeUrl" 
-                placeholder="Paste YouTube URL here..."
-                autocomplete="off"
-            >
-            <button id="convertBtn">Convert</button>
-        </div>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">🎵</div>
+      <h1>YouTube → WAV</h1>
+    </div>
+    <p class="subtitle">Paste a YouTube link and download as WAV instantly</p>
 
-        <div class="loader" id="loader"></div>
-        
-        <div class="progress-container" id="progressContainer">
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill">0%</div>
-            </div>
-        </div>
-
-        <div class="status" id="status"></div>
-        <div id="output"></div>
-
-        <div class="info-box">
-            <strong>📝 How it works:</strong><br>
-            1. Paste a YouTube video URL in the field above<br>
-            2. Click "Convert" - Python will run in your browser via PyScript<br>
-            3. The video will be downloaded and converted to WAV format<br>
-            4. Your WAV file will be available for download<br><br>
-            <strong>⚠️ Note:</strong> First load may take a moment as PyScript initializes. This uses yt-dlp running entirely in your browser!
-        </div>
+    <div class="input-row">
+      <input id="urlInput" type="text" placeholder="https://youtube.com/watch?v=..." autocomplete="off" />
+      <button id="btn">Convert</button>
     </div>
 
-    <script type="py">
-        import js
-        import asyncio
-        import re
-        from pyscript import when
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-bar"></div>
+    </div>
 
-        def show_status(message, status_type):
-            status_el = js.document.getElementById('status')
-            status_el.textContent = message
-            status_el.className = f'status {status_type}'
+    <div id="status"></div>
 
-        def show_loader(show):
-            loader = js.document.getElementById('loader')
-            loader.style.display = 'block' if show else 'none'
+    <div id="videoCard">
+      <img id="videoThumb" src="" alt="" />
+      <div class="video-meta">
+        <div id="videoTitle"></div>
+        <div id="videoChannel"></div>
+      </div>
+    </div>
 
-        def show_progress(show, percent=0):
-            container = js.document.getElementById('progressContainer')
-            fill = js.document.getElementById('progressFill')
-            container.style.display = 'block' if show else 'none'
-            if show:
-                fill.style.width = f'{percent}%'
-                fill.textContent = f'{percent}%'
+    <button id="downloadBtn">⬇ Download WAV</button>
 
-        def extract_video_id(url):
-            """Extract video ID from various YouTube URL formats"""
-            patterns = [
-                r'(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)',
-                r'youtube\.com\/embed\/([^&\n?#]+)',
-                r'youtube\.com\/v\/([^&\n?#]+)'
-            ]
-            
-            for pattern in patterns:
-                match = re.search(pattern, url)
-                if match:
-                    return match.group(1)
-            return None
+    <p class="footer">Powered by cobalt.tools · No account needed · Runs in your browser</p>
+  </div>
 
-        def is_valid_youtube_url(url):
-            """Validate YouTube URL"""
-            pattern = r'^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/.+'
-            return re.match(pattern, url) is not None
+  <script type="py" config='{"packages": ["pyodide-http"]}'>
+import re
+import json
+import js
+import asyncio
+from pyscript import when
+import pyodide_http
 
-        @when("click", "#convertBtn")
-        async def convert_to_wav(event):
-            """Main conversion function"""
-            url_input = js.document.getElementById('youtubeUrl')
-            convert_btn = js.document.getElementById('convertBtn')
-            url = url_input.value.strip()
-            
-            # Reset UI
-            js.document.getElementById('status').className = 'status'
-            js.document.getElementById('output').style.display = 'none'
-            
-            # Validate URL
-            if not url:
-                show_status('Please enter a YouTube URL', 'error')
-                return
-            
-            if not is_valid_youtube_url(url):
-                show_status('Please enter a valid YouTube URL', 'error')
-                return
-            
-            video_id = extract_video_id(url)
-            if not video_id:
-                show_status('Could not extract video ID from URL', 'error')
-                return
-            
-            # Disable button and show progress
-            convert_btn.disabled = True
-            show_loader(True)
-            show_status('Initializing download... This may take a moment.', 'info')
-            
-            try:
-                # Since yt-dlp cannot run directly in PyScript due to system dependencies,
-                # we'll use a public API service as a workaround
-                show_progress(True, 25)
-                show_status('Fetching video information...', 'info')
-                
-                await asyncio.sleep(0.5)
-                
-                show_progress(True, 50)
-                show_status('Processing audio extraction...', 'info')
-                
-                # Simulating the conversion process
-                await asyncio.sleep(0.5)
-                
-                show_progress(True, 75)
-                show_status('Converting to WAV format...', 'info')
-                
-                await asyncio.sleep(0.5)
-                
-                show_progress(True, 100)
-                
-                # Show alternative solution message
-                message = f'''✅ Video ID extracted: {video_id}
+pyodide_http.patch_all()
 
-⚠️ Browser Limitation Notice:
-Due to browser security restrictions and YouTube's policies, direct downloading cannot be performed entirely in-browser, even with PyScript.
+# ── state ──────────────────────────────────────────────────
+_state = {"download_url": None, "title": "audio"}
 
-🔧 Recommended Solutions:
+# ── helpers ────────────────────────────────────────────────
+def set_status(msg, kind):
+    el = js.document.getElementById("status")
+    el.textContent = msg
+    el.className = kind
 
-1. LOCAL COMMAND (Best Quality):
-   pip install yt-dlp
-   yt-dlp -x --audio-format wav {url}
+def set_progress(show):
+    js.document.getElementById("progressWrap").style.display = "block" if show else "none"
 
-2. PYTHON SCRIPT:
-   Use the script below to download locally.
+def extract_video_id(url):
+    for pat in [r"[?&]v=([^&\n?#]+)", r"youtu\.be/([^&\n?#?]+)", r"shorts/([^&\n?#]+)"]:
+        m = re.search(pat, url)
+        if m:
+            return m.group(1)
+    return None
 
-3. ONLINE SERVICES:
-   • y2mate.com
-   • ytmp3.nu
-   (Then convert MP3 to WAV if needed)'''
-                
-                show_status(message, 'warning')
-                
-                # Show Python script example
-                output_el = js.document.getElementById('output')
-                output_el.style.display = 'block'
-                output_el.textContent = f'''# Python script to download as WAV:
-import yt_dlp
+def is_youtube_url(url):
+    return bool(re.match(r"^(https?://)?(www\.)?(youtube\.com|youtu\.be)/.+", url))
 
-ydl_opts = {{
-    'format': 'bestaudio/best',
-    'postprocessors': [{{
-        'key': 'FFmpegExtractAudio',
-        'preferredcodec': 'wav',
-    }}],
-    'outtmpl': '%(title)s.%(ext)s',
-}}
+# ── fetch video info via oEmbed (no auth) ──────────────────
+def fetch_video_info(video_id):
+    import urllib.request
+    oembed = f"https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v={video_id}&format=json"
+    try:
+        with urllib.request.urlopen(oembed) as r:
+            return json.loads(r.read().decode())
+    except Exception:
+        return None
 
-with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-    ydl.download(['{url}'])
-'''
-                
-            except Exception as e:
-                show_status(f'Error: {str(e)}', 'error')
-                js.console.error(str(e))
-            
-            finally:
-                convert_btn.disabled = False
-                show_loader(False)
-                show_progress(False)
+# ── main convert ───────────────────────────────────────────
+@when("click", "#btn")
+async def on_convert(event):
+    url = js.document.getElementById("urlInput").value.strip()
+    btn = js.document.getElementById("btn")
 
-    </script>
+    # reset UI
+    js.document.getElementById("status").className = ""
+    js.document.getElementById("videoCard").style.display = "none"
+    js.document.getElementById("downloadBtn").style.display = "none"
+    _state["download_url"] = None
 
-    <script>
-        // Allow Enter key to trigger conversion
-        document.getElementById('youtubeUrl').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('convertBtn').click();
-            }
-        });
-    </script>
+    if not url:
+        set_status("Please paste a YouTube URL.", "error")
+        return
+    if not is_youtube_url(url):
+        set_status("That doesn't look like a YouTube URL.", "error")
+        return
+
+    video_id = extract_video_id(url)
+    if not video_id:
+        set_status("Could not extract video ID from URL.", "error")
+        return
+
+    btn.disabled = True
+    set_progress(True)
+    set_status("Fetching video info…", "info")
+
+    # ── video info ──
+    info = fetch_video_info(video_id)
+    if info:
+        _state["title"] = info.get("title", "audio")
+        js.document.getElementById("videoTitle").textContent  = info.get("title", "")
+        js.document.getElementById("videoChannel").textContent = info.get("author_name", "")
+        js.document.getElementById("videoThumb").src = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
+        js.document.getElementById("videoCard").style.display = "block"
+
+    set_status("Requesting download link from cobalt.tools…", "info")
+
+    # ── cobalt.tools API ──
+    import urllib.request
+    clean_url = f"https://www.youtube.com/watch?v={video_id}"
+    payload = json.dumps({
+        "url": clean_url,
+        "downloadMode": "audio",
+        "audioFormat": "wav",
+        "audioQuality": "320"
+    }).encode()
+
+    req = urllib.request.Request(
+        "https://api.cobalt.tools/",
+        data=payload,
+        headers={
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+        },
+        method="POST"
+    )
+
+    try:
+        with urllib.request.urlopen(req) as r:
+            data = json.loads(r.read().decode())
+
+        status = data.get("status", "")
+
+        if status in ("stream", "redirect", "tunnel"):
+            _state["download_url"] = data["url"]
+            set_status("✅ Ready! Click the button below to download.", "success")
+            js.document.getElementById("downloadBtn").style.display = "block"
+
+        elif status == "picker":
+            items = data.get("picker", [])
+            if items:
+                _state["download_url"] = items[0]["url"]
+                set_status("✅ Ready! Click the button below to download.", "success")
+                js.document.getElementById("downloadBtn").style.display = "block"
+            else:
+                raise Exception("Empty picker response")
+
+        elif status == "error":
+            code = data.get("error", {}).get("code", "unknown")
+            raise Exception(f"cobalt error: {code}")
+
+        else:
+            raise Exception(f"Unexpected status: {status!r}")
+
+    except Exception as e:
+        set_status(f"❌ {e}\n\nTry a different video or retry in a moment.", "error")
+
+    finally:
+        btn.disabled = False
+        set_progress(False)
+
+
+# ── download button ────────────────────────────────────────
+@when("click", "#downloadBtn")
+async def on_download(event):
+    dl_url = _state.get("download_url")
+    title  = _state.get("title", "audio")
+    if not dl_url:
+        return
+
+    set_status("Downloading… large videos may take a minute.", "info")
+    set_progress(True)
+
+    # Trigger via JS anchor click (most reliable cross-browser)
+    a = js.document.createElement("a")
+    a.href = dl_url
+    a.download = f"{title}.wav"
+    a.target = "_blank"
+    js.document.body.appendChild(a)
+    a.click()
+    js.document.body.removeChild(a)
+
+    set_status("✅ Download started! Check your downloads folder.", "success")
+    set_progress(False)
+
+
+# ── Enter key on input ─────────────────────────────────────
+@when("keydown", "#urlInput")
+async def on_keydown(event):
+    if event.key == "Enter":
+        await on_convert(event)
+  </script>
 </body>
 </html>
